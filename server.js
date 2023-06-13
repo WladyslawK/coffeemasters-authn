@@ -41,10 +41,12 @@ if(userFound){
   //User found, check password
   if(bcrypt.compareSync(req.body.password, userFound.password)){
     res.send({ok: true, name: userFound.name, email: userFound.email})
+  }else{
+    res.send({ok: false, message: "Credentials are wrong."})
   }
 }else{
   //eslse not found
-  req.send({ok: false, message: "Credentials are wrong."})
+  res.send({ok: false, message: "Credentials are wrong."})
 }
 
 
@@ -60,17 +62,18 @@ app.post("/auth/register", (req, res) => {
   const user = {
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password
+    password: hashedPass
   }
   const userFound = findUser(user.email)
   if(userFound){
     // user already exists
+    console.log(userFound);
     res.send({ok: false, message: "User already exists"});
   }else{
     // User is new, we are good
   db.data.users.push(user);
   db.write();
-
+  res.send({ok: true });
   }
 
 
